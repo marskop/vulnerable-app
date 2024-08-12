@@ -1,1 +1,1 @@
-# vulnerable-app
+# This is a python app with vulnerabilities
