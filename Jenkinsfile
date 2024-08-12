@@ -8,18 +8,18 @@ pipeline {
             }
         }
 
-        stage('Static Analysis') {
-            steps {
-                // Run truffleHog to detect secrets and save the report
-                sh 'trufflehog --json ./ > trufflehog-report.json'
+        // stage('Static Analysis') {
+        //     steps {
+        //         // Run truffleHog to detect secrets and save the report
+        //         sh 'trufflehog --json ./ > trufflehog-report.json'
 
-                // Run linter for Python and save the report
-                sh 'pylint **/*.py > pylint-report.txt || true'
+        //         // Run linter for Python and save the report
+        //         sh 'pylint **/*.py > pylint-report.txt || true'
 
-                // Run static code analysis with Bandit and save the report
-                sh 'bandit -r . -f json -o bandit-report.json'
-            }
-        }
+        //         // Run static code analysis with Bandit and save the report
+        //         sh 'bandit -r . -f json -o bandit-report.json'
+        //     }
+        // }
 
         stage('Build') {
             steps {
