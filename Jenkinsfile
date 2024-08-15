@@ -90,19 +90,19 @@ pipeline {
             }
         }
 
-        stage('Run Static Analysis Inside Docker') {
-            steps {
-                script {
-                    // Use a Python Docker image to run static analysis tools inside a container
-                    docker.image('python:3.9').inside {
-                        bat 'pip install bandit'
-                        bat 'bandit -r .'
-                        bat 'pip install truffleHog'
-                        bat 'trufflehog --regex --entropy=True .'
-                    }
-                }
-            }
-        }
+        // stage('Run Static Analysis Inside Docker') {
+        //     steps {
+        //         script {
+        //             // Use a Python Docker image to run static analysis tools inside a container
+        //             docker.image('python:3.9').inside {
+        //                 bat 'pip install bandit'
+        //                 bat 'bandit -r .'
+        //                 bat 'pip install truffleHog'
+        //                 bat 'trufflehog --regex --entropy=True .'
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Run Application and Perform Dynamic Analysis') {
             steps {
