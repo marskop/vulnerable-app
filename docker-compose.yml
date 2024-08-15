@@ -1,0 +1,7 @@
+version: '3'
+services:
+  static-analysis:
+    image: static-analysis
+    volumes:
+      - ./app:/app
+    command: /bin/bash
