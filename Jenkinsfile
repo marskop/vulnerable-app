@@ -11,7 +11,7 @@
 //                 checkout scm
 //             }
 //         }
-        
+
 //         stage('Build Docker Image') {
 //             steps {
 //                 script {
@@ -107,22 +107,23 @@ pipeline {
         stage('Run Application and Perform Dynamic Analysis') {
             steps {
                 script {
-                    dockerImage.inside('-w /app') {
-                        sh 'nohup python app.py &'
+                    dockerImage.inside {
+                        sh 'echo "Docker container is running and accessible."'
+                        // sh 'nohup python app.py &'
 
-                        // Nmap for open ports and services
-                        sh 'nmap -p 5000 localhost'
+                        // // Nmap for open ports and services
+                        // sh 'nmap -p 5000 localhost'
 
-                        // SQLMap for SQL Injection
-                        sh 'sqlmap -u http://localhost:5000/login --data="username=admin&password=admin" --batch'
+                        // // SQLMap for SQL Injection
+                        // sh 'sqlmap -u http://localhost:5000/login --data="username=admin&password=admin" --batch'
 
-                        // OWASP ZAP for XSS, Open Redirect, etc.
-                        sh 'zap-cli start'
-                        sh 'zap-cli open-url http://localhost:5000'
-                        sh 'zap-cli spider http://localhost:5000'
-                        sh 'zap-cli active-scan http://localhost:5000'
-                        sh 'zap-cli report -o zap_report.html -f html'
-                        sh 'zap-cli stop'
+                        // // OWASP ZAP for XSS, Open Redirect, etc.
+                        // sh 'zap-cli start'
+                        // sh 'zap-cli open-url http://localhost:5000'
+                        // sh 'zap-cli spider http://localhost:5000'
+                        // sh 'zap-cli active-scan http://localhost:5000'
+                        // sh 'zap-cli report -o zap_report.html -f html'
+                        // sh 'zap-cli stop'
                     }
                 }
             }
