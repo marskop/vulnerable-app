@@ -66,7 +66,7 @@
 //     }
 // }
 
-// V2 
+// V2
 
 pipeline {
     agent any
@@ -95,10 +95,10 @@ pipeline {
                 script {
                     // Use a Python Docker image to run static analysis tools inside a container
                     docker.image('python:3.9').inside {
-                        sh 'pip install bandit'
-                        sh 'bandit -r .'
-                        sh 'pip install truffleHog'
-                        sh 'trufflehog --regex --entropy=True .'
+                        bat 'pip install bandit'
+                        bat 'bandit -r .'
+                        bat 'pip install truffleHog'
+                        bat 'trufflehog --regex --entropy=True .'
                     }
                 }
             }
