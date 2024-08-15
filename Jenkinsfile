@@ -1,63 +1,67 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = 'vulnerable-app'
-    }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    dockerImage = docker.build(DOCKER_IMAGE)
-                }
-            }
-        }
-        stage('Verify Docker Image') {
-            steps {
-                sh 'docker images'
-            }
-        }
-        stage('Run Static Analysis') {
-            steps {
-                script {
-                    // Convert Windows path to Unix path for Docker
-                    def unixWorkspace = pwd().replace('C:', '/c').replaceAll('\\\\', '/')
-
-                    dockerImage.inside("--workdir ${unixWorkspace}") {
-                        sh 'pip install bandit'
-                        sh 'bandit -r .'
-                    }
-                }
-            }
-        }
-
-        stage('Run Application and Dynamic Analysis') {
-            steps {
-                script {
-                    // Convert Windows path to Unix path for Docker
-                    def unixWorkspace = pwd().replace('C:', '/c').replaceAll('\\\\', '/')
-
-                    dockerImage.inside("--workdir ${unixWorkspace}") {
-                        sh 'nohup python app.py &'
-                        sh 'nmap -p 5000 localhost'
-                        sh 'sqlmap -u http://localhost:5000/login --data="username=admin&password=admin" --batch'
-                    }
-                }
-            }
-        }
     }
+
+    stage('Static Analysis') {
+            steps {
+                sh '''
+                    # Εγκατάσταση εργαλείων
+                    pip install bandit semgrep
+
+                    # Εκτέλεση Bandit για έλεγχο Python code
+                    bandit -r .
+
+                    # Εκτέλεση Semgrep για στατικούς ελέγχους
+                    semgrep --config p/ci .
+                '''
+            }
+    }
+
+    stage('Build') {
+            steps {
+                sh 'docker build -t vulnerable-app .'
+            }
+    }
+
+    stage('Dynamic Analysis') {
+            steps {
+                script {
+                    def dockerImage = docker.image('your-app')
+                    dockerImage.run('-d -p 5000:5000')
+                    sleep(10) // Δώστε λίγο χρόνο για την εκκίνηση της εφαρμογής
+
+                    // Έλεγχος με Nmap για ευπάθειες
+                    sh 'nmap -p- --script vuln localhost'
+
+                    // Έλεγχος με SQLMap για SQL injection
+                    sh 'sqlmap -u "http://localhost:5000/login" --data="username=test&password=test" --batch'
+                }
+            }
+    }
+
+    stage('Cleanup') {
+            steps {
+                sh 'docker stop $(docker ps -q --filter "ancestor=your-app")'
+                sh 'docker rm $(docker ps -aq --filter "ancestor=your-app")'
+            }
+    }
+
     post {
         always {
-            // Clean up
-            sh 'docker stop vuln-app || true'
-            sh 'docker rm vuln-app || true'
+            archiveArtifacts artifacts: '**/reports/*.xml', allowEmptyArchive: true
+            junit 'reports/**/*.xml'
+        }
+        failure {
+            mail to: 'your-email@example.com',
+                 subject: "Build failed in Jenkins: ${currentBuild.fullDisplayName}",
+                 body: "Build ${env.BUILD_NUMBER} failed. Please check the Jenkins logs."
         }
     }
 }
