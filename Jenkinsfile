@@ -8,29 +8,35 @@ pipeline {
             }
         }
 
-       stage('Static Analysis') {
+        stage('Static Analysis') {
             steps {
-                bat 'trufflehog --regex --entropy=True /app'
-                bat 'semgrep --config=p/ci /app'
-                bat 'bandit -r /app'
+                // Run trufflehog in a Docker container
+                bat 'docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog file /app'
+
+                // Run semgrep in a Docker container
+                bat 'docker run --rm -v %cd%\\app:/app returntocorp/semgrep --config=p/ci /app'
+
+                // Run bandit in a Docker container
+                bat 'docker run --rm -v %cd%\\app:/app pycqa/bandit bandit -r /app'
             }
         }
-          stage('Build') {
+
+        stage('Build') {
             steps {
-                bat './build.bat'
+                bat 'build.bat'
             }
         }
 
         stage('Dynamic Analysis') {
             steps {
-                bat 'docker run --rm -v $(pwd)/app:/app zaproxy/zap2docker-stable zap-baseline.py -t http://your-app-url'
-                bat 'docker run --rm sqlmap/sqlmap -u http://your-app-url --batch'
+                bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t http://your-app-url'
+                bat 'docker run --rm sqlmap/sqlmap -u https://github.com/marskop/vulnerable-app.git --batch'
             }
         }
 
         stage('Deploy') {
             steps {
-                bat './deploy.sh'
+                bat 'deploy.bat'
             }
         }
     }
