@@ -1,10 +1,11 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, make_response, redirect, jsonify
 import sqlite3
 import os
+import subprocess
 
 app = Flask(__name__)
 
-# Ευπάθεια: Στατικός κωδικός στον κώδικα
+# Vulnerability: Στατικός κωδικός στον κώδικα
 SECRET_KEY = "supersecretkey123"
 
 def get_db_connection():
@@ -23,13 +24,16 @@ def login():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Ευπάθεια: SQL Injection
+        # Vulnerability: SQL Injection
         query = f"SELECT * FROM users WHERE username='{username}' AND password='{password}'"
         cursor.execute(query)
         user = cursor.fetchone()
 
         if user:
-            return f'Welcome, {username}!'
+            # Vulnerability: Insecure Session Management (Set session ID to username directly)
+            resp = make_response(f'Welcome, {username}!')
+            resp.set_cookie('session_id', username)  # Insecure cookie handling
+            return resp
         else:
             return 'Invalid credentials'
     return '''
@@ -44,7 +48,7 @@ def login():
 def search():
     query = request.args.get('query', '')
 
-    # Ευπάθεια: XSS
+    # Vulnerability: XSS
     html = f'<h2>Search Results for "{query}"</h2>'
     return render_template_string(html)
 
@@ -52,11 +56,58 @@ def search():
 def admin():
     token = request.args.get('token')
 
-    # Ευπάθεια: Hardcoded admin token
+    # Vulnerability: Hardcoded admin token
     if token == "admintoken123":
         return 'Welcome, admin!'
     else:
         return 'Unauthorized access', 403
+
+@app.route('/redirect')
+def unsafe_redirect():
+    url = request.args.get('url')
+    
+    # Vulnerability: Open Redirect
+    return redirect(url)
+
+@app.route('/file')
+def file_read():
+    filename = request.args.get('file')
+    
+    # Vulnerability: Path Traversal
+    with open(filename, 'r') as f:
+        return f.read()
+
+@app.route('/command')
+def command_execution():
+    cmd = request.args.get('cmd')
+    
+    # Vulnerability: Command Injection
+    output = subprocess.check_output(cmd, shell=True)
+    return jsonify(output=output.decode('utf-8'))
+
+@app.route('/xxe', methods=['POST'])
+def xxe():
+    xml = request.data
+    
+    # Vulnerability: XML External Entity (XXE)
+    result = subprocess.run(['xmllint', '--noout', '--xmlout'], input=xml, text=True, capture_output=True)
+    return result.stdout
+
+@app.route('/unrestricted_upload', methods=['POST'])
+def unrestricted_upload():
+    file = request.files['file']
+    
+    # Vulnerability: Unrestricted File Upload
+    file.save(os.path.join('/uploads', file.filename))
+    return 'File uploaded successfully'
+
+@app.route('/insecure_deserialization', methods=['POST'])
+def insecure_deserialization():
+    serialized_data = request.data
+    
+    # Vulnerability: Insecure Deserialization
+    deserialized_data = eval(serialized_data.decode('utf-8'))  # Extremely dangerous!
+    return jsonify(deserialized_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
