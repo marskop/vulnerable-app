@@ -11,12 +11,20 @@ pipeline {
                 checkout scm
             }
         }
+        
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t vulnerable-app .'
-                // script {
-                //     dockerImage = docker.build(DOCKER_IMAGE)
-                // }
+                script {
+                    dockerImage = docker.build(DOCKER_IMAGE)
+                }
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                script {
+                    dockerImage.run('-d -p 5000:5000 --name vuln-app')
+                }
             }
         }
         stage('Static Analysis') {
@@ -27,13 +35,7 @@ pipeline {
                 sh 'trufflehog --regex --entropy=True .'
             }
         }
-        stage('Run Container') {
-            steps {
-                script {
-                    dockerImage.run("-d -p 5000:5000 --name vuln-app")
-                }
-            }
-        }
+
         stage('Dynamic Analysis') {
             steps {
                 // Nmap for open ports and services
