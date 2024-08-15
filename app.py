@@ -1,6 +1,7 @@
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, make_response, redirect, jsonify
 import sqlite3
 import os
+import subprocess
 
 app = Flask(__name__)
 
@@ -29,7 +30,10 @@ def login():
         user = cursor.fetchone()
 
         if user:
-            return f'Welcome, {username}!'
+            # Ευπάθεια: Insecure Session Management (Set session ID to username directly)
+            resp = make_response(f'Welcome, {username}!')
+            resp.set_cookie('session_id', username)  # Insecure cookie handling
+            return resp
         else:
             return 'Invalid credentials'
     return '''
@@ -57,6 +61,53 @@ def admin():
         return 'Welcome, admin!'
     else:
         return 'Unauthorized access', 403
+
+@app.route('/redirect')
+def unsafe_redirect():
+    url = request.args.get('url')
+    
+    # Ευπάθεια: Open Redirect
+    return redirect(url)
+
+@app.route('/file')
+def file_read():
+    filename = request.args.get('file')
+    
+    # Ευπάθεια: Path Traversal
+    with open(filename, 'r') as f:
+        return f.read()
+
+@app.route('/command')
+def command_execution():
+    cmd = request.args.get('cmd')
+    
+    # Ευπάθεια: Command Injection
+    output = subprocess.check_output(cmd, shell=True)
+    return jsonify(output=output.decode('utf-8'))
+
+@app.route('/xxe', methods=['POST'])
+def xxe():
+    xml = request.data
+    
+    # Ευπάθεια: XML External Entity (XXE)
+    result = subprocess.run(['xmllint', '--noout', '--xmlout'], input=xml, text=True, capture_output=True)
+    return result.stdout
+
+@app.route('/unrestricted_upload', methods=['POST'])
+def unrestricted_upload():
+    file = request.files['file']
+    
+    # Ευπάθεια: Unrestricted File Upload
+    file.save(os.path.join('/uploads', file.filename))
+    return 'File uploaded successfully'
+
+@app.route('/insecure_deserialization', methods=['POST'])
+def insecure_deserialization():
+    serialized_data = request.data
+    
+    # Ευπάθεια: Insecure Deserialization
+    deserialized_data = eval(serialized_data.decode('utf-8'))  # Extremely dangerous!
+    return jsonify(deserialized_data)
 
 if __name__ == "__main__":
     app.run(debug=True)
