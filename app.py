@@ -5,7 +5,7 @@ import subprocess
 
 app = Flask(__name__)
 
-# Vulnerability: Στατικός κωδικός στον κώδικα
+# Vulnerability: static code
 SECRET_KEY = "supersecretkey123"
 
 def get_db_connection():
