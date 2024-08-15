@@ -9,14 +9,14 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-                // git 'https://github.com/marskop/vulnerable-app.git'
             }
         }
         stage('Build Docker Image') {
             steps {
-                script {
-                    dockerImage = docker.build(DOCKER_IMAGE)
-                }
+                sh 'docker build -t vulnerable-app .'
+                // script {
+                //     dockerImage = docker.build(DOCKER_IMAGE)
+                // }
             }
         }
         stage('Static Analysis') {
