@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+      environment {
+        DOCKER_USERNAME = credentials('80f6d929-c3c6-45ef-9109-9e4bdcc2241e').username
+        DOCKER_PASSWORD = credentials('80f6d929-c3c6-45ef-9109-9e4bdcc2241e').password
+    }
+
     stages {
         stage('Checkout') {
             steps {
