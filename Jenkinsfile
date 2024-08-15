@@ -103,7 +103,15 @@ pipeline {
         //         }
         //     }
         // }
-
+        stage('Test Docker') {
+            steps {
+                script {
+                    docker.image('alpine').inside {
+                        sh 'echo "This is running inside a Docker container"'
+                    }
+                }
+            }
+        }
         stage('Run Application and Perform Dynamic Analysis') {
             steps {
                 script {
@@ -117,13 +125,13 @@ pipeline {
                         // // SQLMap for SQL Injection
                         // sh 'sqlmap -u http://localhost:5000/login --data="username=admin&password=admin" --batch'
 
-                        // // OWASP ZAP for XSS, Open Redirect, etc.
-                        // sh 'zap-cli start'
-                        // sh 'zap-cli open-url http://localhost:5000'
-                        // sh 'zap-cli spider http://localhost:5000'
-                        // sh 'zap-cli active-scan http://localhost:5000'
-                        // sh 'zap-cli report -o zap_report.html -f html'
-                        // sh 'zap-cli stop'
+                    // // OWASP ZAP for XSS, Open Redirect, etc.
+                    // sh 'zap-cli start'
+                    // sh 'zap-cli open-url http://localhost:5000'
+                    // sh 'zap-cli spider http://localhost:5000'
+                    // sh 'zap-cli active-scan http://localhost:5000'
+                    // sh 'zap-cli report -o zap_report.html -f html'
+                    // sh 'zap-cli stop'
                     }
                 }
             }
