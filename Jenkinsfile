@@ -19,7 +19,11 @@ pipeline {
                 }
             }
         }
-
+        stage('Verify Docker Image') {
+            steps {
+                sh 'docker images'
+            }
+        }
         stage('Run Static Analysis') {
             steps {
                 script {
