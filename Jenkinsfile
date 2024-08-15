@@ -107,7 +107,7 @@ pipeline {
         stage('Run Application and Perform Dynamic Analysis') {
             steps {
                 script {
-                    dockerImage.inside {
+                    dockerImage.inside('-w /app') {
                         sh 'nohup python app.py &'
 
                         // Nmap for open ports and services
