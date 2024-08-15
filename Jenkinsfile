@@ -10,27 +10,27 @@ pipeline {
 
        stage('Static Analysis') {
             steps {
-                sh 'trufflehog --regex --entropy=True /app'
-                sh 'semgrep --config=p/ci /app'
-                sh 'bandit -r /app'
+                bat 'trufflehog --regex --entropy=True /app'
+                bat 'semgrep --config=p/ci /app'
+                bat 'bandit -r /app'
             }
         }
           stage('Build') {
             steps {
-                sh './build.sh'
+                bat './build.bat'
             }
         }
 
         stage('Dynamic Analysis') {
             steps {
-                sh 'docker run --rm -v $(pwd)/app:/app zaproxy/zap2docker-stable zap-baseline.py -t http://your-app-url'
-                sh 'docker run --rm sqlmap/sqlmap -u http://your-app-url --batch'
+                bat 'docker run --rm -v $(pwd)/app:/app zaproxy/zap2docker-stable zap-baseline.py -t http://your-app-url'
+                bat 'docker run --rm sqlmap/sqlmap -u http://your-app-url --batch'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh './deploy.sh'
+                bat './deploy.sh'
             }
         }
     }
