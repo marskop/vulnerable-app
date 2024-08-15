@@ -12,11 +12,11 @@ pipeline {
             steps {
                 // Use the locally built Docker image for analysis
                 // Run trufflehog in a Docker container
-                bat 'docker run --rm -v %cd%\\app:/app vulnerable-app:latest trufflehog file /app'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog file /app'
                 // Run semgrep in a Docker container
-                bat 'docker run --rm -v %cd%\\app:/app vulnerable-app:latest semgrep --config=p/ci /app'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest semgrep --config=p/ci /app'
                 // Run bandit in a Docker container
-                bat 'docker run --rm -v %cd%\\app:/app vulnerable-app:latest bandit -r /app'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest bandit -r /app'
             }
         }
 
