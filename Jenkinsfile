@@ -2,13 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'vulnerable-flask-app'
+        DOCKER_IMAGE = 'vulnerable-app'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/marskop/vulnerable-app.git'
+                checkout scm
+                // git 'https://github.com/marskop/vulnerable-app.git'
             }
         }
         stage('Build Docker Image') {
