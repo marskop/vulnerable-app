@@ -11,8 +11,7 @@ pipeline {
         stage('Static Analysis') {
             steps {
                 // Run trufflehog in Docker container
-                // bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog https://github.com/marskop/vulnerable-app.git'
-                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog git https://github.com/marskop/vulnerable-app.git --only-verified'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog https://github.com/marskop/vulnerable-app.git'
                 // Run semgrep in Docker container
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest semgrep --config=p/ci /app'
                 // Run bandit in Docker container
