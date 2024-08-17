@@ -26,7 +26,9 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'build.bat'
+                bat 'pip install -r requirements.txt'
+                bat 'if not exist app.py (echo "Error: app.py not found!" & exit 1)'
+                echo 'Build completed successfully.'
             }
         }
 
