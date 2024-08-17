@@ -1,7 +1,23 @@
 version: '3'
 services:
-  static-analysis:
-    image: static-analysis
-    volumes:
-      - ./app:/app
-    command: /bin/bash
+  vulnerable-app:
+    build: .
+    ports:
+      - "5000:5000"
+    networks:
+      - vulnnet
+  
+  sqlmap:
+    image: marsko/vulnerable-app:latest
+    depends_on:
+      - vulnerable-app
+    networks:
+      - vulnnet
+    entrypoint: >
+      sh -c "
+      sleep 10 && 
+      sqlmap -u http://vulnerable-app:5000/login --data="username=test&password=test" --batch --level=5 --risk=3
+      "
+
+networks:
+  vulnnet:
