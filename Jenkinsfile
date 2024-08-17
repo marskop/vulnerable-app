@@ -12,7 +12,7 @@ pipeline {
             steps {
                 // Run trufflehog in Docker container
                 // bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog https://github.com/marskop/vulnerable-app.git'
-                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog filesystem /app'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog git https://github.com/marskop/vulnerable-app.git --only-verified'
                 // Run semgrep in Docker container
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest semgrep --config=p/ci /app'
                 // Run bandit in Docker container
