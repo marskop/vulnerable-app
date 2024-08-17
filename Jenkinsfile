@@ -12,10 +12,15 @@ pipeline {
             steps {
                 // Run trufflehog in Docker container
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog https://github.com/marskop/vulnerable-app.git'
+                bat 'echo Trufflehog Exit Code: %ERRORLEVEL%'
+
                 // Run semgrep in Docker container
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest semgrep --config=p/ci /app'
+                bat 'echo Semgrep Exit Code: %ERRORLEVEL%'
+
                 // Run bandit in Docker container
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest bandit -r /app'
+                bat 'echo Bandit Exit Code: %ERRORLEVEL%'
             }
         }
 
