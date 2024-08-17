@@ -36,6 +36,8 @@ pipeline {
             steps {
                 // bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git'
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest sqlmap -u https://github.com/marskop/vulnerable-app.git --batch'
+                 // Χρήση του ZAP Docker image για δυναμική ανάλυση
+                bat 'docker run --rm -v %cd%\\app:/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git -r zap_report.html'
             }
         }
 
