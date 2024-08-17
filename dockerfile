@@ -1,6 +1,9 @@
 # Use a lightweight Python image
 FROM python:3.8-slim
 
+# Install git
+RUN apt-get update && apt-get install -y git
+
 # Upgrade pip and install necessary packages
 RUN pip install --upgrade pip
 RUN pip install bandit semgrep trufflehog
