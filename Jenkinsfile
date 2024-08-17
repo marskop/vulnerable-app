@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Checkout') {
             steps {
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 // Use the locally built Docker image for analysis
                 // Run trufflehog in a Docker container
-                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog file /app'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest trufflehog git /app'
                 // Run semgrep in a Docker container
                 bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest semgrep --config=p/ci /app'
                 // Run bandit in a Docker container
@@ -28,7 +28,7 @@ pipeline {
 
         stage('Dynamic Analysis') {
             steps {
-                bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t http://your-app-url'
+                bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git'
                 bat 'docker run --rm sqlmap/sqlmap -u https://github.com/marskop/vulnerable-app.git --batch'
             }
         }
