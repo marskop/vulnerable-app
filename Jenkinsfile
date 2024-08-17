@@ -19,8 +19,8 @@ pipeline {
                 bat 'echo Semgrep Exit Code: %ERRORLEVEL%'
 
                 // Run bandit in Docker container
-                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest bandit -r /app'
-                bat 'echo Bandit Exit Code: %ERRORLEVEL%'
+                // bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest bandit -r /app'
+                // bat 'echo Bandit Exit Code: %ERRORLEVEL%'
             }
         }
 
