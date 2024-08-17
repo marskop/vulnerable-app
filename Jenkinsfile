@@ -34,7 +34,7 @@ pipeline {
 
         stage('Dynamic Analysis') {
             steps {
-                bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git'
+                // bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git'
                 bat 'docker run --rm sqlmap/sqlmap -u https://github.com/marskop/vulnerable-app.git --batch'
             }
         }
