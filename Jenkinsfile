@@ -8,13 +8,21 @@ pipeline {
             }
         }
 
-               stage('TruffleHog') {
+        stage('TruffleHog') {
             steps {
                 // Run TruffleHog in Docker container
                 bat '''
                 docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog git https://github.com/marskop/vulnerable-app.git
                 '''
                 bat 'echo TruffleHog Exit Code: %ERRORLEVEL%'
+            }
+        }
+
+        stage('TruffleHog Scan Filesystem') {
+            steps {
+                    bat '''
+            docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog filesystem /app
+            '''
             }
         }
 
