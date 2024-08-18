@@ -8,6 +8,16 @@ pipeline {
             }
         }
 
+               stage('TruffleHog') {
+            steps {
+                // Run TruffleHog in Docker container
+                bat '''
+                docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog git https://github.com/marskop/vulnerable-app.git
+                '''
+                bat 'echo TruffleHog Exit Code: %ERRORLEVEL%'
+            }
+        }
+
         stage('Static Analysis') {
             steps {
                 // comment out for now because its not working as expected
