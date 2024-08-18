@@ -1,3 +1,0 @@
-http://vulnerable-app:5000/login (POST)  # /usr/local/bin/sqlmap -u http://vulnerable-app:5000/login --data=username=test
-
-username=test
