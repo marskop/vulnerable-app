@@ -62,21 +62,21 @@ pipeline {
         //     }
         // }
 
-         stage('Nmap Scan') {
+            stage('Nmap Scan') {
             steps {
                 script {
-                    // Ensure that Nmap is installed, or run it via Docker
+                    // Run Nmap in Docker and save the results to a file
                     bat '''
                     docker run --rm instrumentisto/nmap nmap -sV --script=vuln fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app > nmap_report.txt
                     '''
                 }
             }
-        }
+            }
 
-                stage('ZAP Active Scan') {
+            stage('ZAP Active Scan') {
             steps {
                 script {
-                    def targetUrl = "https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/command" // Replace with your ngrok URL if needed
+                    def targetUrl = 'https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/command' // Replace with your ngrok URL if needed
                     def zapOptions = "-t ${targetUrl} -r zap_report.html -z \"-config api.disablekey=true\""
 
                     // Perform the baseline scan (passive scan)
@@ -86,7 +86,7 @@ pipeline {
                     bat "docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-full-scan.py ${zapOptions}"
                 }
             }
-        }
+                }
 
         stage('Deploy') {
             steps {
