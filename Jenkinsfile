@@ -23,6 +23,10 @@ pipeline {
                     bat '''
             docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog filesystem /app
             '''
+
+                 bat '''
+            docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog filesystem /app/app.py
+            '''
             }
         }
 
