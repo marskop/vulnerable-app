@@ -65,7 +65,7 @@ pipeline {
                 stage('ZAP Active Scan') {
             steps {
                 script {
-                    def targetUrl = "https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/" // Replace with your ngrok URL if needed
+                    def targetUrl = "https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/command" // Replace with your ngrok URL if needed
                     def zapOptions = "-t ${targetUrl} -r zap_report.html -z \"-config api.disablekey=true\""
 
                     // Perform the baseline scan (passive scan)
