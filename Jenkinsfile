@@ -37,7 +37,7 @@ pipeline {
         stage('Dynamic Analysis') {
             steps {
                 // bat 'docker run --rm -v %cd%\\app:/app zaproxy/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git'
-                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest sqlmap -u https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/login --data="username=test&password=test"  --batch --level=5 --risk=3 --random-agent'
+                bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest sqlmap -u https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/login --data="username=test&password=test" --batch --random-agent'
 
                  // Χρήση του ZAP Docker image για δυναμική ανάλυση
                 // bat 'docker run --rm -v %cd%\\app:/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t https://github.com/marskop/vulnerable-app.git -r zap_report.html'

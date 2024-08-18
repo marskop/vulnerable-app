@@ -1,23 +1,8 @@
 version: '3'
 services:
-  vulnerable-app:
-    build: .
-    ports:
-      - "5000:5000"
-    networks:
-      - vulnnet
-
   sqlmap:
     image: marsko/vulnerable-app:latest
-    depends_on:
-      - vulnerable-app
-    networks:
-      - vulnnet
+    volumes:
+      - ./sqlmap-output:/root/.local/share/sqlmap/output
     entrypoint: >
-      sh -c "
-      sleep 10 && 
-      sqlmap -u http://vulnerable-app:5000/login --data='username=test&password=test' --batch --level=5 --risk=3 --random-agent
-      "
-
-networks:
-  vulnnet:
+      sqlmap -u https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/login --data="username=test&password=test" --batch --random-agent
