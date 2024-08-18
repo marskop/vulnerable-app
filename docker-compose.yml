@@ -13,10 +13,12 @@ services:
       - vulnerable-app
     networks:
       - vulnnet
+    volumes:
+      - ./sqlmap-output:/root/.local/share/sqlmap/output
     entrypoint: >
       sh -c "
       sleep 10 && 
-      sqlmap -u http://vulnerable-app:5000/login --data="username=test&password=test" --batch --level=5 --risk=3
+      sqlmap -u http://vulnerable-app:5000/login --data="username=test&password=test" --batch --level=5 --risk=3 --random-agent
       "
 
 networks:
