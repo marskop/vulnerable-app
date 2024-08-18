@@ -62,6 +62,17 @@ pipeline {
         //     }
         // }
 
+         stage('Nmap Scan') {
+            steps {
+                script {
+                    // Ensure that Nmap is installed, or run it via Docker
+                    bat '''
+                    docker run --rm instrumentisto/nmap nmap -sV --script=vuln https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app > nmap_report.txt
+                    '''
+                }
+            }
+        }
+
                 stage('ZAP Active Scan') {
             steps {
                 script {
@@ -89,6 +100,7 @@ pipeline {
             archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
             junit 'target/test-results/*.xml'
             archiveArtifacts artifacts: 'zap_report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: ' nmap_report.html', allowEmptyArchive: true
         }
     }
 }
