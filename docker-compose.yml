@@ -6,19 +6,17 @@ services:
       - "5000:5000"
     networks:
       - vulnnet
-  
+
   sqlmap:
     image: marsko/vulnerable-app:latest
     depends_on:
       - vulnerable-app
     networks:
       - vulnnet
-    volumes:
-      - ./sqlmap-output:/root/.local/share/sqlmap/output
     entrypoint: >
       sh -c "
       sleep 10 && 
-      sqlmap -u http://vulnerable-app:5000/login --data="username=test&password=test" --batch --level=5 --risk=3 --random-agent
+      sqlmap -u http://vulnerable-app:5000/login --data='username=test&password=test' --batch --level=5 --risk=3 --random-agent
       "
 
 networks:
