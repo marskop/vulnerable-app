@@ -52,12 +52,12 @@ pipeline {
 
         stage('Dynamic Analysis with OWASP ZAP') {
             steps {
+                // Χρησιμοποιήστε το OWASP ZAP για ανάλυση ευπαθειών της εφαρμογής
                 bat '''
-        docker run --rm -v %cd%\\app:/zap/wrk/:rw --network host owasp/zap2docker-weekly zap-baseline.py -t https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app -r zap_report.html
-        '''
+                docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app -r zap_report.html
+                '''
             }
         }
-
         stage('Deploy') {
             steps {
                 bat 'deploy.bat'
