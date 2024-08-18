@@ -87,13 +87,14 @@ pipeline {
         //     }
         // }
 
-            stage('Nmap Scan') {
-            steps {
-                    // Run Nmap in Docker and save the results to a file
-                    bat '''
-                    docker run --rm instrumentisto/nmap nmap -sV --script=vuln fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app   '''
-            }
-            }
+
+            // stage('Nmap Scan') {
+            // steps {
+            //         // Run Nmap in Docker and save the results to a file
+            //         bat '''
+            //         docker run --rm instrumentisto/nmap nmap -sV --script=vuln fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app   '''
+            // }
+            // }
 
             stage('ZAP Active Scan') {
             steps {
