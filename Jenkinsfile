@@ -126,8 +126,8 @@ pipeline {
                         bat 'echo Semgrep Exit Code: %ERRORLEVEL%'
 
                         // Εκτέλεση Bandit για στατική ανάλυση του κώδικα Python
-                        // bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest bandit -r /app'
-                        // bat 'echo Bandit Exit Code: %ERRORLEVEL%'
+                        bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest bandit -r /app'
+                        bat 'echo Bandit Exit Code: %ERRORLEVEL%'
                     }
                 }
             }
@@ -138,7 +138,7 @@ pipeline {
                 stage('SQLmap Scan') {
                     steps {
                         // Εκτέλεση SQLmap για δυναμική ανάλυση SQL Injection
-                        bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest sqlmap -u https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/login --data="username=test&password=test" --batch --random-agent'
+                        bat 'docker run --rm -v %cd%\\app:/app marsko/vulnerable-app:latest sqlmap -u https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app --data="username=test&password=test" --batch --random-agent'
                     }
                 }
 
