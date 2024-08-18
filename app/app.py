@@ -5,6 +5,7 @@ import subprocess
 
 app = Flask(__name__)
 
+
 # Vulnerability: static code
 SECRET_KEY = "supersecretkey123"
 
