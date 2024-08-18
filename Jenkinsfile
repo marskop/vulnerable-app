@@ -11,8 +11,11 @@ pipeline {
         stage('TruffleHog') {
             steps {
                 // Run TruffleHog in Docker container
+                // bat '''
+                // docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog git https://github.com/marskop/vulnerable-app.git
+                // '''
                 bat '''
-                docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog git https://github.com/marskop/vulnerable-app.git
+                docker run --rm -it -v %cd%\\app:/app trufflesecurity/trufflehog:latest github --repo https://github.com/trufflesecurity/test_keys
                 '''
                 bat 'echo TruffleHog Exit Code: %ERRORLEVEL%'
             }
