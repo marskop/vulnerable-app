@@ -50,17 +50,33 @@ pipeline {
             }
         }
 
-        stage('Dynamic Analysis with OWASP ZAP') {
+        // stage('Dynamic Analysis with OWASP ZAP') {
+        //     steps {
+        //         // Χρησιμοποιήστε το OWASP ZAP για ανάλυση ευπαθειών της εφαρμογής
+        //         // bat '''
+        //         // docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/search -r zap_report.html
+        //         // '''
+        //         bat '''
+        //         docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/redirect -r zap_report.html
+        //         '''
+        //     }
+        // }
+
+                stage('ZAP Active Scan') {
             steps {
-                // Χρησιμοποιήστε το OWASP ZAP για ανάλυση ευπαθειών της εφαρμογής
-                // bat '''
-                // docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/search -r zap_report.html
-                // '''
-                bat '''
-                docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t https://c16f-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/admin -r zap_report.html
-                '''
+                script {
+                    def targetUrl = "https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app/" // Replace with your ngrok URL if needed
+                    def zapOptions = "-t ${targetUrl} -r zap_report.html -z \"-config api.disablekey=true\""
+
+                    // Perform the baseline scan (passive scan)
+                    bat "docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py ${zapOptions}"
+
+                    // Perform the active scan
+                    bat "docker run --rm -v %cd%\\app:/zap/wrk/:rw zaproxy/zap-stable zap-full-scan.py ${zapOptions}"
+                }
             }
         }
+
         stage('Deploy') {
             steps {
                 bat 'deploy.bat'

@@ -73,17 +73,31 @@ def unsafe_redirect():
 def file_read():
     filename = request.args.get('file')
     
+    if not filename:
+        return "No file specified", 400
+    
     # Vulnerability: Path Traversal
-    with open(filename, 'r') as f:
-        return f.read()
+    try:
+        with open(filename, 'r') as f:
+            return f.read()
+    except FileNotFoundError:
+        return "File not found", 404
+
 
 @app.route('/command')
 def command_execution():
     cmd = request.args.get('cmd')
     
+    if not cmd:
+        return "No command specified", 400
+    
     # Vulnerability: Command Injection
-    output = subprocess.check_output(cmd, shell=True)
-    return jsonify(output=output.decode('utf-8'))
+    try:
+        output = subprocess.check_output(cmd, shell=True)
+        return jsonify(output=output.decode('utf-8'))
+    except subprocess.CalledProcessError as e:
+        return str(e), 500
+
 
 @app.route('/xxe', methods=['POST'])
 def xxe():
