@@ -15,7 +15,7 @@ pipeline {
                 // docker run --rm -v %cd%\\app:/app trufflesecurity/trufflehog git https://github.com/marskop/vulnerable-app.git
                 // '''
                 bat '''
-                docker run --rm -it -v %cd%\\app:/app trufflesecurity/trufflehog:latest github --repo https://github.com/trufflesecurity/test_keys
+                docker run --rm -it -v %cd%\\app:/app trufflesecurity/trufflehog:latest github --repo https://github.com/marskop/vulnerable-app.git
                 '''
                 bat 'echo TruffleHog Exit Code: %ERRORLEVEL%'
             }
