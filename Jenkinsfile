@@ -67,7 +67,7 @@ pipeline {
                 script {
                     // Ensure that Nmap is installed, or run it via Docker
                     bat '''
-                    docker run --rm instrumentisto/nmap nmap -sV --script=vuln https://fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app > nmap_report.txt
+                    docker run --rm instrumentisto/nmap nmap -sV --script=vuln fb25-2a02-85f-9a07-c918-4df0-638e-6aac-7ed4.ngrok-free.app > nmap_report.txt
                     '''
                 }
             }
